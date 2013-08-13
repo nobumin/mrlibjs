@@ -45,12 +45,15 @@ angular.module('mrlib', ['ngCookies'], function($compileProvider, $routeProvider
 					latestIDs[idx].node = pnode;
 					latestIDs[idx].lastX = -999;
 					latestIDs[idx].lastY = -999;
+					latestIDs[idx].lastZ = -999;
 				}else{
 					var px = parseInt(pnode.css('left').replace("px", ""));
 					var py = parseInt(pnode.css('top').replace("px", ""));
 					latestIDs[idx].lastX = px;
 					latestIDs[idx].lastY = py;
+					latestIDs[idx].lastZ = latestIDs[idx].z;
 				}
+				latestIDs[idx].z = parseInt(frame.hands[i].palmPosition[2]);
 				pnode.css('left', x+"px");
 				pnode.css('top',  y+"px");
 				tmpIDs[idx]=true;
@@ -128,20 +131,49 @@ angular.module('mrlib', ['ngCookies'], function($compileProvider, $routeProvider
 					var pnode = latestIDs[selectedNodes[key].key].node;
 					var px = parseInt(pnode.css('left').replace("px", ""));
 					var py = parseInt(pnode.css('top').replace("px", ""));
+					var pz = latestIDs[selectedNodes[key].key].z;
 					var lastPx = latestIDs[selectedNodes[key].key].lastX;
 					var lastPy = latestIDs[selectedNodes[key].key].lastY;
+					var lastPz = latestIDs[selectedNodes[key].key].lastZ;
+					var node = selectedNodes[key].node;
+					var style = node[0].currentStyle || document.defaultView.getComputedStyle(node[0], '')
 					if(lastPx != -999 && lastPy != -999) {
 						if(px != lastPx || py != lastPy) {
 							var diffX = lastPx - px;
 							var diffY = lastPy - py;
-							var node = selectedNodes[key].node;
-							var style = node[0].currentStyle || document.defaultView.getComputedStyle(node[0], '')
 							var x1 = parseInt(style.left.replace("px", ""));
 							var y1 = parseInt(style.top.replace("px", ""));
 							var newX = x1 - diffX;
 							var newY = y1 - diffY;
 							node.css('left', newX+"px");
 							node.css('top', newY+"px");
+						}
+					}
+					if(lastPz != -999) {
+						var fingerCnt = -1;
+						for(var i=0;i<frame.hands.length;i++) {
+							if(frame.hands[i].id == selectedNodes[key].key.substring(2)) {
+								fingerCnt = frame.hands[i].fingers ? frame.hands[i].fingers.length : -1;
+								break;
+							}
+						}
+						if(pz != lastPz && fingerCnt == 0) {
+							var pxRate =  Math.abs(pz - lastPz) * 2;//1mmで2%ずつ拡縮
+							var w1 = parseInt(style.width.replace("px", ""));
+							var h1 = parseInt(style.height.replace("px", ""));
+							if(pxRate < 80) {
+								var newW = -1;
+								var newH = -1;
+								if(pz > lastPz) { //拡大
+									newW = w1 + Math.round(w1 * pxRate / 100);
+									newH = h1 + Math.round(h1 * pxRate / 100);
+								}else{ //縮小
+									newW = w1 - Math.round(w1 * pxRate / 100);
+									newH = h1 - Math.round(h1 * pxRate / 100);
+								}
+								node.css('width', newW+"px");
+								node.css('height', newH+"px");
+							}
 						}
 					}
 				}
