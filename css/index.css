@@ -1,0 +1,44 @@
+@charset "utf-8";
+
+#report001 {
+  position: absolute;
+  border: 1px solid rgba(0, 0, 0, 1.0);
+  top: 10px;
+  left: 10px;
+  z-index: 0;
+  width: 600px;
+  height: 300px;
+  background-color: rgba(243,128,179,0.74);
+}
+
+#report002 {
+  position: absolute;
+  border: 1px solid rgba(0, 0, 0, 1.0);
+  top: 800px;
+  left: 800px;
+  z-index: 0;
+  width: 1000px;
+  height: 300px;
+  background-color: rgba(116,244,116,0.68);
+}
+
+#report003 {
+  position: absolute;
+  border: 1px solid rgba(0, 0, 0, 1.0);
+  top: 10px;
+  left: 800px;
+  z-index: 0;
+  width: 600px;
+  height: 300px;
+  background-color: rgba(127,204,216,0.64);
+}
+#report004 {
+  position: absolute;
+  border: 1px solid rgba(0, 0, 0, 1.0);
+  top: 400px;
+  left: 800px;
+  z-index: 0;
+  width: 600px;
+  height: 300px;
+  background-color: rgba(248,250,115,0.72);
+}

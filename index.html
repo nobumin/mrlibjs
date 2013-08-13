@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html ng-app="mrlib" lang="ja" mr-disp-milli="480,270">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Minority Report Library Demo(α版)</title>
+    <link rel="stylesheet" href="css/index.css">
+	<!--[if lt IE 9]><script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular-cookies.min.js"></script>
+	<script src="js/leap.js"></script>
+	<script src="js/mrlib.js"></script>
+	<script src="js/index.js"></script>
+</head>
+	<body ng-controller="indexCtrl">
+	<div id="main">
+	  <div id="report001" mr-node="true">
+	      <h3>なにこれ？</h3><br>
+		  LEAPでマイノリティ・リポートの”あのインターフェース”を作りたいと思っただけです。
+		  まだ奥行きとか認識してません。WebGLやCanvasとの組み合わせも考えましたが、
+		  DIVやSPAN操作の方が、使ってくれる人多いかなと思い、レイヤー操作に対応してます。
+	  </div>
+	  <div id="report002" mr-node="true">
+	      <h3>操作方法</h3><br>
+	      <ul>
+			  <li>手の位置は小さな点で表示されます。小さな点がレイヤー内に入ると、borderが変化します。</li>
+			  <li>レイヤー内で掴む、または指一本にすると、レイヤーを選択した状態になり、移動することが可能です。</li>
+			  <li>レイヤー内に2つの点が入ると、リサイズモードになります。手のひらを広げて上下左右することで、サイズを変更することが可能です。</li>
+	      </ul>
+	  </div>
+	  <div id="report003" mr-node="true">
+	      <h3>環境について</h3><br>
+		  LEAPが必要です！<br>
+		  LEAPのSettingsで”Allow Web Apps”がチェックされている必要があります。<br>
+	  </div>
+	  <div id="report004" mr-node="true">
+	      <h3>今後</h3><br>
+		  回転、反転、重なり順（z-index）をジェスチャーで操作できるようにする。他諸々
+	  </div>
+	</div>
+	</body>
+</html>
