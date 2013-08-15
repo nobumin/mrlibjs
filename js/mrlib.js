@@ -1,6 +1,7 @@
 angular.module('mrlib', ['ngCookies'], function($compileProvider, $routeProvider, $locationProvider) {
 
 	var mrNodes = [];
+	var mrButtons = [];
 
 	var wpx, hpx;
 	var wmm, hmm;
@@ -127,16 +128,26 @@ angular.module('mrlib', ['ngCookies'], function($compileProvider, $routeProvider
 			
 		for(var key in selectedNodes) {
 			if(selectedNodes[key].mode == "selected") {
-				if(frame.fingers && frame.fingers.length <= 1) {
-					var pnode = latestIDs[selectedNodes[key].key].node;
-					var px = parseInt(pnode.css('left').replace("px", ""));
-					var py = parseInt(pnode.css('top').replace("px", ""));
-					var pz = latestIDs[selectedNodes[key].key].z;
-					var lastPx = latestIDs[selectedNodes[key].key].lastX;
-					var lastPy = latestIDs[selectedNodes[key].key].lastY;
-					var lastPz = latestIDs[selectedNodes[key].key].lastZ;
-					var node = selectedNodes[key].node;
-					var style = node[0].currentStyle || document.defaultView.getComputedStyle(node[0], '')
+				var pnode = latestIDs[selectedNodes[key].key].node;
+				var px = parseInt(pnode.css('left').replace("px", ""));
+				var py = parseInt(pnode.css('top').replace("px", ""));
+				var pz = latestIDs[selectedNodes[key].key].z;
+				var lastPx = latestIDs[selectedNodes[key].key].lastX;
+				var lastPy = latestIDs[selectedNodes[key].key].lastY;
+				var lastPz = latestIDs[selectedNodes[key].key].lastZ;
+				var node = selectedNodes[key].node;
+				var style = node[0].currentStyle || document.defaultView.getComputedStyle(node[0], '')
+				var fingerCnt = -1;
+				var hand = null;
+				for(var i=0;i<frame.hands.length;i++) {
+					if(frame.hands[i].id == selectedNodes[key].key.substring(2)) {
+						hand = frame.hands[i];
+						fingerCnt = frame.hands[i].fingers ? frame.hands[i].fingers.length : -1;
+						break;
+					}
+				}
+					
+				if(fingerCnt == 1) {
 					if(lastPx != -999 && lastPy != -999) {
 						if(px != lastPx || py != lastPy) {
 							var diffX = lastPx - px;
@@ -149,16 +160,12 @@ angular.module('mrlib', ['ngCookies'], function($compileProvider, $routeProvider
 							node.css('top', newY+"px");
 						}
 					}
+				}
+				
+				if(fingerCnt == 5) {
 					if(lastPz != -999) {
-						var fingerCnt = -1;
-						for(var i=0;i<frame.hands.length;i++) {
-							if(frame.hands[i].id == selectedNodes[key].key.substring(2)) {
-								fingerCnt = frame.hands[i].fingers ? frame.hands[i].fingers.length : -1;
-								break;
-							}
-						}
-						if(pz != lastPz && fingerCnt == 0) {
-							var pxRate =  Math.abs(pz - lastPz) * 2;//1mmで2%ずつ拡縮
+						if(pz != lastPz) {
+							var pxRate =  Math.abs(pz - lastPz);//1mmで1%ずつ拡縮
 							var w1 = parseInt(style.width.replace("px", ""));
 							var h1 = parseInt(style.height.replace("px", ""));
 							if(pxRate < 80) {
@@ -190,7 +197,7 @@ angular.module('mrlib', ['ngCookies'], function($compileProvider, $routeProvider
 					}
 				}
 
-				if(fingerCnt1 > 2 && fingerCnt2 > 2) {
+				if(fingerCnt1 == 0 && fingerCnt2 == 0) {
 					var pnode  = latestIDs[selectedNodes[key].key].node;
 					var pnode2 = latestIDs[selectedNodes[key].another].node;
 					var px  = parseInt(pnode.css('left').replace("px", ""));
@@ -239,4 +246,11 @@ angular.module('mrlib', ['ngCookies'], function($compileProvider, $routeProvider
 			});
 		}
 	});
+
+	$compileProvider.directive('mrButton', function() {
+		return function(scope, element, attrs) {
+			mrButtons.push(element);
+		}
+	});
+
 });
