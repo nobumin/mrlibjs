@@ -120,6 +120,7 @@ angular.module('mrlib', ['ngCookies'], function($compileProvider, $routeProvider
 			if(selected) {
 				node.css("border","5px solid rgba(0, 0, 0, 1.0)");
 				node.css("z-index", 999);
+				node[0].parentNode.insertBefore(node[0], node[0].parentNode.lastChild);
 			}else{
 				node.css("border","1px solid rgba(0, 0, 0, 1.0)");
 				node.css("z-index", 0);
@@ -238,7 +239,6 @@ angular.module('mrlib', ['ngCookies'], function($compileProvider, $routeProvider
 	$compileProvider.directive('mrNode', function() {
 		return function(scope, element, attrs) {
 			mrNodes.push(element);
-
 			angular.element(element).bind("mouseover", function() {
 			});
 
