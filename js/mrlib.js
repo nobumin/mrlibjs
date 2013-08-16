@@ -145,9 +145,9 @@ angular.module('mrlib', ['ngCookies'], function($compileProvider, $routeProvider
 			}
 			if(selected) {
 				if(latestIDs[selectedNodes[node[0].id].key].on) {
-					node.css("border","5px solid rgba(33, 92, 236, 0.8)");
+					node.css("border","3px solid rgba(33, 92, 236, 0.8)");
 				}else{
-					node.css("border","5px solid rgba(0, 0, 0, 0.8)");
+					node.css("border","3px solid rgba(255, 210, 18, 0.8)");
 				}
 				node.css("z-index", 999);
 				node[0].parentNode.insertBefore(node[0], node[0].parentNode.lastChild);
