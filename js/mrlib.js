@@ -95,7 +95,7 @@ angular.module('mrlib', ['ngCookies'], function($compileProvider, $routeProvider
 									selectedNodes[removeKey].node.css("border","1px solid rgba(0, 0, 0, 1.0)");
 									selectedNodes[removeKey].node.css("z-index", 0);
 									delete selectedNodes[removeKey];
-									break;
+								//	break;
 								}
 							}
 						}else{
@@ -118,13 +118,17 @@ angular.module('mrlib', ['ngCookies'], function($compileProvider, $routeProvider
 					for(var j=0;frame.gestures && j<frame.gestures.length;j++) {
 						var gesture = frame.gestures[j];
 						var searchEnd = false;
-						if(gesture.type == 'keyTap') {
+						if(gesture.type == "keyTap" || gesture.type == "swipe") {
 							for(var k=0;gesture.handIds && k<gesture.handIds.length;k++) {
 								if(gesture.handIds[k] == key.substring(2)) {
-									if(latestIDs[key].on) {
+									if(latestIDs[key].on && latestIDs[key].type == gesture.type) {
 										latestIDs[key].on = false;
+										latestIDs[key].type = "";
+										latestIDs[key].swipe = [];
 									}else{
 										latestIDs[key].on = true;
+										latestIDs[key].type = gesture.type;
+										latestIDs[key].swipe = [gesture.direction[0],gesture.direction[1],gesture.speed];
 									}
 									searchEnd = true;
 								}
@@ -141,9 +145,9 @@ angular.module('mrlib', ['ngCookies'], function($compileProvider, $routeProvider
 			}
 			if(selected) {
 				if(latestIDs[selectedNodes[node[0].id].key].on) {
-					node.css("border","5px solid rgba(33, 92, 236, 1.0)");
+					node.css("border","5px solid rgba(33, 92, 236, 0.8)");
 				}else{
-					node.css("border","5px solid rgba(0, 0, 0, 1.0)");
+					node.css("border","5px solid rgba(0, 0, 0, 0.8)");
 				}
 				node.css("z-index", 999);
 				node[0].parentNode.insertBefore(node[0], node[0].parentNode.lastChild);
@@ -155,10 +159,11 @@ angular.module('mrlib', ['ngCookies'], function($compileProvider, $routeProvider
 		for(var key in latestIDs) {
 			if(!usedHands[key]) {
 				latestIDs[key].on = false;
+				latestIDs[key].type = "";
+				latestIDs[key].swipe = [];
 			}
 		}
 		
-			
 		for(var key in selectedNodes) {
 			if(selectedNodes[key].mode == "selected") {
 				var pnode = latestIDs[selectedNodes[key].key].node;
@@ -168,7 +173,7 @@ angular.module('mrlib', ['ngCookies'], function($compileProvider, $routeProvider
 				var lastPx = latestIDs[selectedNodes[key].key].lastX;
 				var lastPy = latestIDs[selectedNodes[key].key].lastY;
 				var lastPz = latestIDs[selectedNodes[key].key].lastZ;
-				var tapOn = latestIDs[selectedNodes[key].key].on;
+				var tapOn = latestIDs[selectedNodes[key].key].on && latestIDs[selectedNodes[key].key].type == 'keyTap' ? true : false;
 				var node = selectedNodes[key].node;
 				var style = node[0].currentStyle || document.defaultView.getComputedStyle(node[0], '')
 				var fingerCnt = -1;
@@ -178,6 +183,37 @@ angular.module('mrlib', ['ngCookies'], function($compileProvider, $routeProvider
 						hand = frame.hands[i];
 						fingerCnt = frame.hands[i].fingers ? frame.hands[i].fingers.length : -1;
 						break;
+					}
+				}
+				
+				if(latestIDs[selectedNodes[key].key].on && latestIDs[selectedNodes[key].key].type == 'swipe') {
+					if(latestIDs[selectedNodes[key].key].swipe && latestIDs[selectedNodes[key].key].swipe.length == 3) {
+						var sx = latestIDs[selectedNodes[key].key].swipe[0];
+						var sy = latestIDs[selectedNodes[key].key].swipe[1]*-1;
+						var speed = latestIDs[selectedNodes[key].key].swipe[2]/2;
+						var x1 = parseInt(style.left.replace("px", ""));
+						var y1 = parseInt(style.top.replace("px", ""));
+						var w1 = parseInt(style.width.replace("px", ""));
+						var h1 = parseInt(style.height.replace("px", ""));
+						var mx = x1+Math.floor(sx*speed);
+						var my = y1+Math.floor(sy*speed);
+						if(mx > wpx) {
+							mx = wpx - 50;
+						}
+						if(mx+w1 < 0) {
+							mx = 50-w1;
+						}
+						if(my > hpx) {
+							my = hpx - 50;
+						}
+						if(my+h1 < 0) {
+							my = 50-h1;
+						}
+						node.css('left', mx+"px");
+						node.css('top', my+"px");
+						latestIDs[selectedNodes[key].key].on = false;
+						latestIDs[selectedNodes[key].key].type = "";
+						latestIDs[selectedNodes[key].key].swipe = [];
 					}
 				}
 					
@@ -199,7 +235,6 @@ angular.module('mrlib', ['ngCookies'], function($compileProvider, $routeProvider
 						}
 					}
 				}
-				
 				if(fingerCnt == 5 && tapOn) {
 					if(lastPz != -999) {
 						if(pz != lastPz) {
