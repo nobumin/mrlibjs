@@ -118,7 +118,7 @@ angular.module('mrlib', ['ngCookies'], function($compileProvider, $routeProvider
 				}
 			}
 			if(selected) {
-				node.css("border","5px solid rgba(0, 0, 0, 1.0)");
+				nodfingerCnt.css("border","5px solid rgba(0, 0, 0, 1.0)");
 				node.css("z-index", 999);
 				node[0].parentNode.insertBefore(node[0], node[0].parentNode.lastChild);
 			}else{
@@ -148,6 +148,10 @@ angular.module('mrlib', ['ngCookies'], function($compileProvider, $routeProvider
 					}
 				}
 					
+				if(fingerCnt == 0) {
+					node[0].parentNode.insertBefore(node[0], node[0].parentNode.lastChild);
+				}
+				
 				if(fingerCnt == 1) {
 					if(lastPx != -999 && lastPy != -999) {
 						if(px != lastPx || py != lastPy) {
